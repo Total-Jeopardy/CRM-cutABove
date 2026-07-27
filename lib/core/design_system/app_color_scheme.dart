@@ -45,7 +45,7 @@ class AppColorScheme extends ThemeExtension<AppColorScheme> {
     accentIndicator: AppColors.brandAccent,
     semanticError: AppColors.semanticError,
     semanticSuccess: AppColors.semanticSuccess,
-    swipeFavoriteBackground: Color(0xFFE8D9A0),
+    swipeFavoriteBackground: Color(0x33FFD600),
   );
 
   /// Dark theme mapping.
@@ -61,7 +61,7 @@ class AppColorScheme extends ThemeExtension<AppColorScheme> {
     accentIndicator: AppColors.brandAccent,
     semanticError: AppColors.semanticError,
     semanticSuccess: AppColors.semanticSuccess,
-    swipeFavoriteBackground: Color(0xFF3A3010),
+    swipeFavoriteBackground: Color(0x33FFD600),
   );
 
   @override

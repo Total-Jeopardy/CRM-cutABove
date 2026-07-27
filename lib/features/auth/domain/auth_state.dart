@@ -1,3 +1,5 @@
+import 'package:supabase_flutter/supabase_flutter.dart';
+
 sealed class AuthState {
   const AuthState();
 }
@@ -11,10 +13,9 @@ final class AuthLoading extends AuthState {
 }
 
 final class AuthAuthenticated extends AuthState {
-  const AuthAuthenticated(this.userName, this.role);
+  AuthAuthenticated({required this.user});
 
-  final String userName;
-  final String role;
+  final User user;
 }
 
 final class AuthError extends AuthState {

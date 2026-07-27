@@ -11,21 +11,16 @@ class AppShell extends StatelessWidget {
   final Widget child;
 
   static int tabIndexForLocation(String location) {
-    if (location == AppRoutes.search ||
-        location.startsWith('${AppRoutes.search}/')) {
+    if (location == AppRoutes.shops ||
+        location.startsWith('${AppRoutes.shops}/')) {
       return 1;
     }
-    if (location == AppRoutes.favorites ||
-        location.startsWith('${AppRoutes.favorites}/')) {
+    if (location == AppRoutes.map || location.startsWith('${AppRoutes.map}/')) {
       return 2;
-    }
-    if (location == AppRoutes.discover ||
-        location.startsWith('${AppRoutes.discover}/')) {
-      return 3;
     }
     if (location == AppRoutes.settings ||
         location.startsWith('${AppRoutes.settings}/')) {
-      return 4;
+      return 3;
     }
     return 0;
   }
@@ -33,17 +28,15 @@ class AppShell extends StatelessWidget {
   static String locationForTabIndex(int index) {
     switch (index) {
       case 0:
-        return AppRoutes.home;
+        return AppRoutes.dashboard;
       case 1:
-        return AppRoutes.search;
+        return AppRoutes.shops;
       case 2:
-        return AppRoutes.favorites;
+        return AppRoutes.map;
       case 3:
-        return AppRoutes.discover;
-      case 4:
         return AppRoutes.settings;
       default:
-        return AppRoutes.home;
+        return AppRoutes.dashboard;
     }
   }
 
@@ -59,14 +52,63 @@ class AppShell extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).extension<AppColorScheme>()!;
+    final currentIndex = tabIndexForLocation(location);
 
-    return Scaffold(
-      backgroundColor: colors.surfaceBackground,
-      body: child,
-      bottomNavigationBar: AppBottomNav(
-        currentIndex: tabIndexForLocation(location),
-        onTap: (index) => _onTabSelected(context, index),
-      ),
+    void onDestinationSelected(int index) {
+      _onTabSelected(context, index);
+    }
+
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        if (constraints.maxWidth >= 1024) {
+          return Scaffold(
+            backgroundColor: colors.surfaceBackground,
+            body: Row(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                NavigationRail(
+                  selectedIndex: currentIndex,
+                  onDestinationSelected: onDestinationSelected,
+                  labelType: NavigationRailLabelType.all,
+                  destinations: const [
+                    NavigationRailDestination(
+                      icon: Icon(Icons.dashboard_outlined),
+                      selectedIcon: Icon(Icons.dashboard),
+                      label: Text('Dashboard'),
+                    ),
+                    NavigationRailDestination(
+                      icon: Icon(Icons.storefront_outlined),
+                      selectedIcon: Icon(Icons.storefront),
+                      label: Text('Shops'),
+                    ),
+                    NavigationRailDestination(
+                      icon: Icon(Icons.map_outlined),
+                      selectedIcon: Icon(Icons.map),
+                      label: Text('Map'),
+                    ),
+                    NavigationRailDestination(
+                      icon: Icon(Icons.settings_outlined),
+                      selectedIcon: Icon(Icons.settings),
+                      label: Text('Settings'),
+                    ),
+                  ],
+                ),
+                const VerticalDivider(thickness: 1, width: 1),
+                Expanded(child: child),
+              ],
+            ),
+          );
+        }
+
+        return Scaffold(
+          backgroundColor: colors.surfaceBackground,
+          body: child,
+          bottomNavigationBar: AppBottomNav(
+            currentIndex: currentIndex,
+            onTap: onDestinationSelected,
+          ),
+        );
+      },
     );
   }
 }

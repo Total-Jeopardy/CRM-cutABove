@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import 'package:cut_above/core/design_system/app_color_scheme.dart';
 import 'package:cut_above/core/design_system/app_typography.dart';
 
 class AppBottomNav extends StatelessWidget {
@@ -15,48 +14,49 @@ class AppBottomNav extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = Theme.of(context).extension<AppColorScheme>()!;
+    final barTheme = Theme.of(context).bottomNavigationBarTheme;
 
     return DecoratedBox(
       decoration: BoxDecoration(
-        color: colors.surfaceCard,
-        border: Border(top: BorderSide(color: colors.borderSubtle)),
+        color: barTheme.backgroundColor,
+        border: Border(
+          top: BorderSide(
+            color: Theme.of(context).dividerColor.withValues(alpha: 0.2),
+          ),
+        ),
       ),
       child: BottomNavigationBar(
         currentIndex: currentIndex,
         onTap: onTap,
-        type: BottomNavigationBarType.fixed,
-        backgroundColor: colors.surfaceCard,
-        selectedItemColor: colors.accentIndicator,
-        unselectedItemColor: colors.textSecondary,
+        type: barTheme.type ?? BottomNavigationBarType.fixed,
+        backgroundColor: barTheme.backgroundColor,
+        selectedItemColor: barTheme.selectedItemColor,
+        unselectedItemColor: barTheme.unselectedItemColor,
+        elevation: barTheme.elevation ?? 0,
         selectedLabelStyle: AppTypography.caption.copyWith(
           fontWeight: FontWeight.w600,
         ),
         unselectedLabelStyle: AppTypography.caption,
+        iconSize: 24,
         items: const [
           BottomNavigationBarItem(
-            icon: Icon(Icons.home_outlined),
-            activeIcon: Icon(Icons.home),
-            label: 'Home',
+            icon: Icon(Icons.dashboard_outlined, size: 24),
+            activeIcon: Icon(Icons.dashboard, size: 24),
+            label: 'Dashboard',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.search_outlined),
-            activeIcon: Icon(Icons.search),
-            label: 'Search',
+            icon: Icon(Icons.storefront_outlined, size: 24),
+            activeIcon: Icon(Icons.storefront, size: 24),
+            label: 'Shops',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.favorite_border),
-            activeIcon: Icon(Icons.favorite),
-            label: 'Favorites',
+            icon: Icon(Icons.map_outlined, size: 24),
+            activeIcon: Icon(Icons.map, size: 24),
+            label: 'Map',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.explore_outlined),
-            activeIcon: Icon(Icons.explore),
-            label: 'Discover',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.settings_outlined),
-            activeIcon: Icon(Icons.settings),
+            icon: Icon(Icons.settings_outlined, size: 24),
+            activeIcon: Icon(Icons.settings, size: 24),
             label: 'Settings',
           ),
         ],

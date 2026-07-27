@@ -1,0 +1,18 @@
+# Shipped in build/web (manual drag or publish dir). force = false: real files
+# (main.dart.js, etc.) are served first; SPA fallback only when no file exists.
+
+[[headers]]
+  for = "*.js"
+  [headers.values]
+    Content-Type = "application/javascript"
+
+[[headers]]
+  for = "*.wasm"
+  [headers.values]
+    Content-Type = "application/wasm"
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+  force = false

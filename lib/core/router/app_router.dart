@@ -4,10 +4,15 @@ import 'package:go_router/go_router.dart';
 
 import 'package:cut_above/core/components/app_shell.dart';
 import 'package:cut_above/core/router/app_routes.dart';
-import 'package:cut_above/core/router/placeholder_route_screen.dart';
 import 'package:cut_above/features/auth/domain/auth_state.dart';
 import 'package:cut_above/features/auth/presentation/auth_providers.dart';
 import 'package:cut_above/features/auth/presentation/login_screen.dart';
+import 'package:cut_above/features/shops/presentation/shop_detail_screen.dart';
+import 'package:cut_above/features/shops/presentation/shop_form_screen.dart';
+import 'package:cut_above/features/dashboard/dashboard_screen.dart';
+import 'package:cut_above/features/map/map_screen.dart';
+import 'package:cut_above/features/settings/presentation/settings_screen.dart';
+import 'package:cut_above/features/shops/presentation/shops_list_screen.dart';
 
 /// Notifies [GoRouter] when [authNotifierProvider] changes so [redirect] runs again.
 final class GoRouterRefreshStream extends ChangeNotifier {
@@ -20,13 +25,14 @@ final class GoRouterRefreshStream extends ChangeNotifier {
 }
 
 final routerProvider = Provider<GoRouter>((ref) {
-  ref.watch(authNotifierProvider);
-
+  // Do not watch auth here: rebuilding GoRouter on every auth transition
+  // disposes navigation state and can trigger debugger breaks. Redirects
+  // still run via [GoRouterRefreshStream] + refreshListenable.
   final refresh = GoRouterRefreshStream(ref);
   ref.onDispose(refresh.dispose);
 
   return GoRouter(
-    initialLocation: AppRoutes.home,
+    initialLocation: AppRoutes.dashboard,
     refreshListenable: refresh,
     redirect: (context, state) {
       final auth = ref.read(authNotifierProvider);
@@ -37,7 +43,7 @@ final routerProvider = Provider<GoRouter>((ref) {
         return AppRoutes.login;
       }
       if (auth is AuthAuthenticated && onLogin) {
-        return AppRoutes.home;
+        return AppRoutes.dashboard;
       }
       return null;
     },
@@ -50,31 +56,54 @@ final routerProvider = Provider<GoRouter>((ref) {
         builder: (context, state, child) =>
             AppShell(location: state.uri.path, child: child),
         routes: [
-          _buildTabRoute(path: AppRoutes.home, page: PlaceholderPage.home),
-          _buildTabRoute(path: AppRoutes.search, page: PlaceholderPage.search),
-          _buildTabRoute(
-            path: AppRoutes.favorites,
-            page: PlaceholderPage.favorites,
+          GoRoute(
+            path: AppRoutes.dashboard,
+            pageBuilder: (context, state) => NoTransitionPage<void>(
+              child: const DashboardScreen(),
+            ),
           ),
-          _buildTabRoute(
-            path: AppRoutes.discover,
-            page: PlaceholderPage.discover,
+          GoRoute(
+            path: AppRoutes.shopAdd,
+            pageBuilder: (context, state) => NoTransitionPage<void>(
+              child: const ShopFormScreen(),
+            ),
           ),
-          _buildTabRoute(
+          GoRoute(
+            path: AppRoutes.shopEdit,
+            pageBuilder: (context, state) => NoTransitionPage<void>(
+              child: ShopFormScreen(
+                shopId: state.pathParameters['id']!,
+              ),
+            ),
+          ),
+          GoRoute(
+            path: AppRoutes.shopDetail,
+            pageBuilder: (context, state) => NoTransitionPage<void>(
+              child: ShopDetailScreen(
+                shopId: state.pathParameters['id']!,
+              ),
+            ),
+          ),
+          GoRoute(
+            path: AppRoutes.shops,
+            pageBuilder: (context, state) => NoTransitionPage<void>(
+              child: const ShopsListScreen(),
+            ),
+          ),
+          GoRoute(
+            path: AppRoutes.map,
+            pageBuilder: (context, state) => NoTransitionPage<void>(
+              child: const MapScreen(),
+            ),
+          ),
+          GoRoute(
             path: AppRoutes.settings,
-            page: PlaceholderPage.settings,
+            pageBuilder: (context, state) => NoTransitionPage<void>(
+              child: const SettingsScreen(),
+            ),
           ),
         ],
       ),
     ],
   );
 });
-
-GoRoute _buildTabRoute({required String path, required PlaceholderPage page}) {
-  return GoRoute(
-    path: path,
-    pageBuilder: (context, state) => NoTransitionPage<void>(
-      child: PlaceholderRouteScreen(page: page, useScaffold: false),
-    ),
-  );
-}

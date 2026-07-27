@@ -1,11 +1,11 @@
 {
-    "name": "cut_above",
-    "short_name": "cut_above",
-    "start_url": ".",
+    "name": "CutAbove CRM",
+    "short_name": "CutAbove",
+    "start_url": "/",
     "display": "standalone",
-    "background_color": "#0175C2",
-    "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "background_color": "#FFFFFF",
+    "theme_color": "#4A148C",
+    "description": "CutAbove field CRM",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

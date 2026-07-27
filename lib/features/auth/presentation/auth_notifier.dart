@@ -1,28 +1,58 @@
 part of 'auth_providers.dart';
 
 class AuthNotifier extends Notifier<AuthState> {
-  @override
-  AuthState build() => const AuthInitial();
+  late final AuthRepository _repo;
 
-  Future<void> login(String phone, String password) async {
+  @override
+  AuthState build() {
+    _repo = ref.read(authRepositoryProvider);
+
+    final sub = supabaseClient.auth.onAuthStateChange.listen((data) {
+      final user = data.session?.user;
+      final current = state;
+      if (user != null) {
+        if (current is AuthLoading) return;
+        if (current is! AuthAuthenticated) {
+          state = AuthAuthenticated(user: user);
+        } else if (current.user.id != user.id) {
+          state = AuthAuthenticated(user: user);
+        }
+      } else if (current is AuthAuthenticated) {
+        state = const AuthInitial();
+      }
+    });
+    ref.onDispose(sub.cancel);
+
+    final user = _repo.currentUser;
+    return user != null
+        ? AuthAuthenticated(user: user)
+        : const AuthInitial();
+  }
+
+  Future<void> login(String email, String password) async {
     state = const AuthLoading();
-    final repository = ref.read(authRepositoryProvider);
-    final result = await repository.login(phone, password);
+    final result = await _repo.signIn(email: email, password: password);
 
     switch (result) {
       case ApiSuccess(:final data):
-        await ref.read(tokenStorageProvider).saveTokens(
-              data.accessToken,
-              data.refreshToken,
-            );
-        state = AuthAuthenticated(data.userName, data.role);
+        state = AuthAuthenticated(user: data);
+        try {
+          await ref.read(profileRepositoryProvider).upsertProfile(
+                fullName: data.email?.split('@').first ?? 'User',
+                role: 'field',
+              );
+        } catch (_) {
+          // Profile table / RLS may block; auth still succeeds.
+        }
+        ref.invalidate(currentProfileProvider);
+        ref.invalidate(teamProvider);
       case ApiError(:final message):
         state = AuthError(message);
     }
   }
 
   Future<void> logout() async {
-    await ref.read(tokenStorageProvider).clearTokens();
+    await _repo.signOut();
     state = const AuthInitial();
   }
 }

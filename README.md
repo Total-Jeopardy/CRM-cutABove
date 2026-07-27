@@ -221,6 +221,21 @@ lib/
 
 ---
 
+## Local setup after clone
+
+1. Copy `.env.example` to `.env` and fill in your Supabase URL, anon key, and any Dart-side secrets.
+2. **Android:** Add your Maps API key to `android/local.properties` (this file is not committed):
+   `GOOGLE_MAPS_KEY=your_key`
+3. **iOS:** The committed `ios/Runner/Info.plist` keeps `GMSApiKey` as `GOOGLE_MAPS_KEY_PLACEHOLDER`. To use a real key locally without committing it:
+   ```bash
+   git update-index --skip-worktree ios/Runner/Info.plist
+   ```
+   Then edit `ios/Runner/Info.plist` and set `GMSApiKey` to your real key. To resume tracking: `git update-index --no-skip-worktree ios/Runner/Info.plist`.
+4. **iOS (optional):** `ios/Runner/GoogleMaps.xcconfig` is gitignored — you can store `GOOGLE_MAPS_KEY=...` there if you wire it into Xcode; the default flow uses `Info.plist` as above.
+5. **Web:** The Maps script in `web/index.html` includes the app key; restrict that key in Google Cloud Console (HTTP referrers / domains). For a local-only HTML override, use `web/index.local.html` (gitignored) if you add a workflow that swaps it in.
+
+---
+
 ## Dependencies
 
 | Package | Purpose |

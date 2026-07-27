@@ -1,0 +1,22 @@
+# Netlify site config. For Git deploys, set a build command in the UI that runs
+# `flutter build web ...` (Flutter is not on the default build image), or build
+# locally and deploy `build/web` via CLI: `netlify deploy --prod --dir=build/web`
+
+[build]
+  publish = "build/web"
+
+[[headers]]
+  for = "*.js"
+  [headers.values]
+    Content-Type = "application/javascript"
+
+[[headers]]
+  for = "*.wasm"
+  [headers.values]
+    Content-Type = "application/wasm"
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+  force = false

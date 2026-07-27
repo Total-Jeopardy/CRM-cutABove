@@ -6,10 +6,9 @@ import 'package:cut_above/core/design_system/app_spacing.dart';
 import 'app_routes.dart';
 
 enum PlaceholderPage {
-  home('Home', AppRoutes.home),
-  search('Search', AppRoutes.search),
-  favorites('Favorites', AppRoutes.favorites),
-  discover('Discover', AppRoutes.discover),
+  dashboard('Dashboard', AppRoutes.dashboard),
+  shops('Shops', AppRoutes.shops),
+  map('Map', AppRoutes.map),
   settings('Settings', AppRoutes.settings);
 
   const PlaceholderPage(this.title, this.pathPattern);
